@@ -1,0 +1,184 @@
+@import "tailwindcss";
+/* #root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+*/
+/* Container for the list items */
+
+.list-container {
+  display: flex; /* Use flexbox to align the boxes horizontally */
+  flex-wrap: wrap; /* Wrap to the next line if the screen is too narrow */
+  gap: 5px; /* Add space between the boxes */
+  justify-content: center; /* Left Align the boxes horizontally */
+  display: flex;
+  padding: 5px;
+  width: 300px;
+  border-radius: 10px;
+}
+
+.body {
+  padding: 5px;
+}
+
+.task-card {
+  position: relative;
+  background-color: #ffffff;
+  padding: 0.5em;
+  z-index: 5;
+  box-shadow: 4px 4px 0.5px rgba(0, 0, 0, 0.1);
+  border-radius: inherit;
+  max-width: inherit;
+  transition: 200ms ease-in-out;
+}
+
+.add-task-button {
+  position: relative;
+  background-color: #F1F2F4;
+  border: 2px solid whitesmoke;
+  border-color: whitesmoke;
+  padding: 0px;
+  z-index: 1;
+  border-radius: inherit;
+  max-width: inherit;
+  text-align: left;
+}
+
+.add-list-button {
+  background-color: #ffffff39;
+  border: 0px;
+  justify-content: left;
+  border-radius: 10px;
+}
+
+.board-header {
+  background-color: #EDF4FE;
+  font-size: 1em;
+  padding: 15px;
+  font-weight: bold;
+}
+
+.column {
+  background-color: #F1F2F4;
+  border-radius: 10px;
+  max-width: 300px;
+  box-shadow: 4px 4px 2px rgba(0, 0, 0, 0.3);
+}
+
+.add-task-container {
+  background-color: #ffffff;
+  border-radius: 10px;
+}
+
+.username {
+  color: #C6E1ED;
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+.body-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.body .text {
+  margin: 0 10px 0 0;
+  white-space: pre-line;
+  color: #c0c3d7;
+  font-weight: 400;
+  line-height: 1.5;
+  margin-bottom: 4px;
+}
+
+.footer {
+  position: relative;
+  width: 100%;
+  color: #9fa4aa;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: none;
+  margin-top: 10px;
+}
+
+.footer div {
+  margin-right: 1rem;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.footer svg {
+  margin-right: 5px;
+  height: 100%;
+  stroke: #9fa4aa;
+}
+
+.viewer span {
+  height: 20px;
+  width: 20px;
+  background-color: rgb(28, 117, 219);
+  margin-right: -6px;
+  border-radius: 50%;
+  border: 1px solid #fff;
+  display: grid;
+  align-items: center;
+  text-align: center;
+  font-weight: bold;
+  font-size: 8px;
+  color: #fff;
+  padding: 2px;
+}
+
+.viewer span svg {
+  stroke: #fff;
+}
+
+
+
+
+
+
+
+
+
