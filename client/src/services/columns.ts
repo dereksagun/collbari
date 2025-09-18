@@ -20,8 +20,14 @@ const addTaskToColumn = async (column: Column, task: Task): Promise<Column> => {
   return data
 }
 
+const updateColumn = async (id: string, column: Column): Promise<Column> => {
+  const { data } = await axios.put<Column>(`${baseUrl}/${id}`, column);
+  return data;
+}
+
 export default {
   getAll,
   addColumn,
-  addTaskToColumn
+  addTaskToColumn,
+  updateColumn
 }

@@ -19,7 +19,7 @@ export const TaskForm = ({column}: {column: Column}) => {
       title,
       description,
       status,
-      position: column.taskIds.length + 1
+      position: 0,
     }
     createTask.mutate({column, task: newTask})
     setTitle('');

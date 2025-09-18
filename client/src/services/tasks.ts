@@ -13,7 +13,13 @@ const addTask = async (obj: NewTask): Promise<Task> => {
   return data;
 };
 
+const updateTask = async (obj: Task): Promise<Task> => {
+  const { data } = (await axios.put<Task>(`${baseUrl}/${obj.id}`, obj));
+  return data;
+}
+
 export default {
   getAll,
-  addTask
+  addTask,
+  updateTask
 };

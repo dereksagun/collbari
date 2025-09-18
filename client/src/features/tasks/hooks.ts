@@ -2,6 +2,7 @@ import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import type { Column, NewTask, Task } from "../../types";
 import taskService from '../../services/tasks';
 import columnService from '../../services/columns'
+import tasks from "../../services/tasks";
 
 export const useTasks = () => {
   const queryClient = useQueryClient();
@@ -23,6 +24,16 @@ export const useTasks = () => {
         queryClient.invalidateQueries({ queryKey: ['tasks']}),
         queryClient.invalidateQueries({ queryKey: ['columns']})
       ])
+    }
+  })
+
+  const updateTask = useMutation({
+    mutationFn: async (updatedTask: Task): Promise<Task> => {
+      return await taskService.updateTask(updatedTask);
+    },
+
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({queryKey: ['tasks']});
     }
   })
 

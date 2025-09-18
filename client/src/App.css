@@ -58,7 +58,7 @@
 .body {
   padding: 5px;
 }
-
+/*
 .task-card {
   position: relative;
   background-color: #ffffff;
@@ -68,6 +68,17 @@
   border-radius: inherit;
   max-width: inherit;
   transition: 200ms ease-in-out;
+}
+*/
+
+.task-card {
+  position: relative;
+  background-color: #ffffff;
+  padding: 0.5em;
+  z-index: 5;
+  border-radius: inherit;
+  max-width: inherit;
+  will-change: transform;
 }
 
 .add-task-button {

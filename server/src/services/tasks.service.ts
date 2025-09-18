@@ -15,7 +15,17 @@ const createTask = async (obj: NewTask): Promise<Task> => {
   return newTask;
 }
 
+const updateTask = async (obj: Task): Promise<Task> => {
+  const idx = tasks.findIndex(t => t.id === obj.id);
+
+  tasks[idx] = {
+    ...obj
+  }
+  return tasks[idx];
+}
+
 export default {
   getAll,
-  createTask
+  createTask,
+  updateTask
 }
