@@ -8,7 +8,7 @@ const ListForm = () => {
   const { closeModal } = useModal();
   const { createColumn } = useColumns();
 
-  const onSubmit = (event: React.SyntheticEvent) => {
+  const handleSubmit = (event: React.SyntheticEvent) => {
     event.preventDefault();
 
     const newColumn = {
@@ -23,7 +23,7 @@ const ListForm = () => {
 
   return (
     <div className='add-task-form'>
-      <form onSubmit={onSubmit}>
+      <form onSubmit={handleSubmit}>
         <div className="inputLabel">Add List</div>
         <div className='input-group'>
           <span className='inputLabel'>List Name</span>

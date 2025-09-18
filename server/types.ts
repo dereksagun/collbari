@@ -4,8 +4,7 @@ export interface Task {
   id: ID,
   title: string,
   description: string,
-  status: Status,
-  position: number
+  status: Status
 };
 
 export type NewTask = Omit<Task, 'id'>;

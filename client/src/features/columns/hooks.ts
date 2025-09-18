@@ -1,8 +1,6 @@
-import { useMutation, useMutationState, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import columnService from '../../services/columns'
 import type { Column, NewColumn } from "../../types";
-import columns from "../../services/columns";
-import { arrayMove } from "@dnd-kit/sortable";
 
 export const useColumns = () => {
   const queryClient = useQueryClient();

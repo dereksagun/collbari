@@ -76,7 +76,7 @@
   background-color: #ffffff;
   padding: 0.5em;
   z-index: 5;
-  border-radius: inherit;
+  border-radius: 10px;
   max-width: inherit;
   will-change: transform;
 }

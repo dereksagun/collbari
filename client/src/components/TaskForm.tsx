@@ -1,6 +1,5 @@
 import { useState } from "react";
 import type { Column, Status, NewTask} from "../types";
-import { useAddTaskModal } from "./TaskModal";
 import { useTasks } from "../features/tasks/hooks";
 import { useModal } from "./Modal";
 
@@ -11,6 +10,7 @@ export const TaskForm = ({column}: {column: Column}) => {
 
   const { createTask } = useTasks();
 
+
   const { closeModal } = useModal();
 
   const addTask = (event: React.SyntheticEvent) => {
@@ -19,7 +19,6 @@ export const TaskForm = ({column}: {column: Column}) => {
       title,
       description,
       status,
-      position: 0,
     }
     createTask.mutate({column, task: newTask})
     setTitle('');

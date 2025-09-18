@@ -8,9 +8,12 @@ import ColumnGrid from './components/Column'
 import { ModalProvider, useModal } from './components/Modal'
 import ListForm from './components/ListForm'
 import { CSS } from "@dnd-kit/utilities";
-import { closestCenter, DndContext, PointerSensor, useDraggable, useSensor, useSensors, type DragEndEvent, type DragOverEvent } from '@dnd-kit/core'
+import { closestCenter, DndContext, DragOverlay, PointerSensor, useDraggable, useSensor, useSensors, type DragEndEvent, type DragOverEvent, type DragStartEvent } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
 import { useState } from 'react'
+import TaskCard from './components/TaskCard'
+import Header from './components/Header'
+import Board from './components/Board'
 
 const ColumnAddList = () => {
 
@@ -38,15 +41,9 @@ const Modal = () => {
   }
 }
 
-const Header = () => {
-  return (
-    <div className='board-header'>Kanban Board</div>
-  )
-}
-
 function App() {
   const sensors = useSensors(useSensor(PointerSensor));
-
+  const [activeTask, setActiveTask] = useState<Task | null>(null);
   const { 
     data: columns, 
     isPending: columnsIsPending, 
@@ -83,7 +80,6 @@ function App() {
 
     return columnId ? columnId : null;
 
-    return null
   }
   
   const handleDragOver = (event: DragOverEvent) => {
@@ -103,14 +99,6 @@ function App() {
       ...fromCol,
       taskIds: fromCol?.taskIds.filter(tid => tid != active)
     };
-
-    console.log('dragging item  ', active);
-    console.log('dragging to    ', over);
-
-    console.log('starting column', fromColId);
-    console.log('ending column  ', toColId);
-
-    console.log(' _______________________________________');
 
     const index = 
       over === toCol.id 
@@ -154,25 +142,28 @@ function App() {
       };
 
       updateColumn.mutate(updatedColumn);
+      
     }
+    console.log('end draggin');
+    setActiveTask(null);
+  }
+
+  const handleDragStart = (event: DragStartEvent) => {
+    console.log('started draggin');
+    const task = tasks.find(t => t.id === event.active.id)
+    if (task) setActiveTask(task);
+  }
+
+  const dropAnimation = {
+    duration: 500,
+    easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)'
   }
 
   return (
-    <div>
+    <>
       <Header />
-      <DndContext onDragOver={handleDragOver} onDragEnd={handleDragEnd}collisionDetection={closestCenter} sensors={sensors}>
-        <ModalProvider>
-          <div>
-            <div className="flex gap-3 p-2">
-              {board.map(col => <ColumnGrid key={col.id} column={col}/>)}
-              <ColumnAddList />
-            </div>
-            <Modal />
-          </div>
-        </ModalProvider>
-      </DndContext>
-      
-    </div>
+      <Board />
+    </>
   )
   
 }
