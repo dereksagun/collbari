@@ -3,7 +3,7 @@ import TaskCard from "./TaskCard";
 import { useModal } from "./Modal";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useDroppable } from "@dnd-kit/core";
-import TaskContainer from "./TaskCardDraggable";
+import TaskCardDraggable from "./TaskCardDraggable";
 
 
 interface columnProp {
@@ -17,7 +17,7 @@ const ColumnGrid = ({column} : columnProp) => {
     id: column.id
   });
 
-  const handleClick = () => {
+  const handleAddTask = () => {
     openModal({ type: 'ADD_TASK', props: { column: column } });
   }
   
@@ -29,12 +29,12 @@ const ColumnGrid = ({column} : columnProp) => {
         {column.name}
           <SortableContext items={tasksIds} strategy={verticalListSortingStrategy}>
             {column.tasks.map(task => (
-              <TaskContainer key={task.id} task={task}>
+              <TaskCardDraggable key={task.id} task={task}>
                 <TaskCard />
-              </TaskContainer>
+              </TaskCardDraggable>
             ))}
           </SortableContext>
-        <button onClick={handleClick} className="add-task-button">+ Add another</button>
+        <button onClick={handleAddTask} className="add-task-button">+ Add another</button>
       </div>
     </div>
   )

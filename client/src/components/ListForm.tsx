@@ -1,21 +1,18 @@
 import { useState } from "react";
 import { useColumns } from "../features/columns/hooks";
 import { useModal } from "./Modal";
+import type { Board } from "../types";
 
 
-const ListForm = () => {
+const ListForm = ({board}: {board: Board}) => {
   const [name, setName] = useState('');
   const { closeModal } = useModal();
   const { createColumn } = useColumns();
-
-  const handleSubmit = (event: React.SyntheticEvent) => {
+  console.log(board);
+  const handleAddColumn = async (event: React.SyntheticEvent) => {
     event.preventDefault();
-
-    const newColumn = {
-      name,
-      taskIds: []
-    }
-    createColumn.mutate(newColumn);
+    const newColumn = { name, taskIds: [] }
+    createColumn.mutate({column: newColumn , board: board}); //need to pass data to this form about the boardId 
     setName('');
     closeModal();
   }
@@ -23,7 +20,7 @@ const ListForm = () => {
 
   return (
     <div className='add-task-form'>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleAddColumn}>
         <div className="inputLabel">Add List</div>
         <div className='input-group'>
           <span className='inputLabel'>List Name</span>

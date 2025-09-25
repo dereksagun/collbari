@@ -1,9 +1,9 @@
 import { createContext, useContext, useState } from "react";
 
-import type { Column } from "../types";
+import type { Board, Column } from "../types";
 type ModalConfig = 
   | { type: 'ADD_TASK', props: { column: Column } }
-  | { type: 'ADD_COLUMN' }
+  | { type: 'ADD_COLUMN', props: { board: Board }}
   | { type: null }
 
 

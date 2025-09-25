@@ -1,5 +1,4 @@
-import { forwardRef, useState } from "react";
-
+import { forwardRef } from "react";
 
 interface TaskCardProps {
   children?: React.ReactNode

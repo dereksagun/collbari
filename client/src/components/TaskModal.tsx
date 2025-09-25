@@ -32,7 +32,6 @@ export const AddTaskModalProvider = ({children} : { children: React.ReactNode })
     isOpen
   }
 
-
   return (
     <AddTaskModalContext.Provider value={value}>{children}</AddTaskModalContext.Provider>
   )

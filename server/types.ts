@@ -26,13 +26,25 @@ export interface Column {
 
 export type NewColumn = Omit<Column, 'id'>;
 
-interface TaskDetails {
+
+export interface ColumnDetailed extends Column {
   tasks: Task[]
 }
 
-export interface ColumnDetailed extends Column, TaskDetails {}
-
 export interface Board {
   id: ID,
-  columns: ID[];
+  columnIds: ID[];
 }
+
+export type NewBoard = Omit<Board, 'id'>;
+
+export interface BoardDetailed extends Board {
+  columns: ColumnDetailed[];
+}
+
+export interface User {
+  id: ID,
+  boardIds: ID[];
+}
+
+export type NewUser = Omit<User, 'id'>;

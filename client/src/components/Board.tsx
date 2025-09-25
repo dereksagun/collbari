@@ -3,18 +3,22 @@ import ColumnGrid from "./Column"
 import { ModalProvider, useModal } from '../components/Modal'
 import TaskCard from "./TaskCard"
 import { arrayMove } from "@dnd-kit/sortable"
-import type { Column, ColumnDetailed, Task } from "../types"
-import { useState } from "react"
+import type { BoardDetailed, Column, ColumnDetailed, NewBoard, Task } from "../types"
+import { useEffect, useState } from "react"
 import { useColumns } from "../features/columns/hooks"
 import { useTasks } from "../features/tasks/hooks"
 import ListForm from "./ListForm"
 import { TaskForm } from "./TaskForm"
+import { socket } from "../services/socket"
+import { useBoards } from "../features/boards/hooks"
+import type { Board } from "../types"
+import { useQueryClient } from "@tanstack/react-query"
 
-const ColumnAddList = () => {
+const ColumnAddList = ({board} : {board: Board}) => {
   const { openModal } = useModal();
 
   const onClick = () => {
-    openModal({type: "ADD_COLUMN"});
+    openModal({type: "ADD_COLUMN", props: {board}});
   }
 
   return (
@@ -31,19 +35,49 @@ const Modal = () => {
     case "ADD_TASK":
       return <TaskForm column={modal.props.column}/>
     case "ADD_COLUMN":
-      return <ListForm />
+      return <ListForm board={modal.props.board}/>
   }
 }
+const fillBoardDetails = (activeBoard: Board | null, columns: Column[] | undefined, tasks: Task[] | undefined): BoardDetailed | null => {
 
-const Board = () => {
+  if(!activeBoard) return null;
+  const board: BoardDetailed = {
+    ...activeBoard,
+    columns: activeBoard.columnIds.map(colId => columns?.find(col => col.id === colId)).filter(c => c != undefined)
+        .map(col => {
+          return {
+            ...col,
+            tasks: col.taskIds.map(id => tasks?.find(t => t.id === id)).filter(t => t != undefined)
+          }
+        })
+  }
+  return board;
+}
+
+const KanbanBoard = () => {
+
     const sensors = useSensors(useSensor(PointerSensor));
     const [activeTask, setActiveTask] = useState<Task | null>(null);
+    const [activeBoard, setActiveBoard] = useState<Board | null>(null);
+    const queryClient = useQueryClient();
+
+    const {
+      data: boards,
+      isPending: boardsIsPending,
+      isError: boardsIsError,
+      error: boardsError,
+      createBoard,
+      updateBoard
+    } = useBoards();
+    
     const { 
       data: columns, 
       isPending: columnsIsPending, 
       isError: columnsIsError, 
       error: columnsError,
-      updateColumn
+      updateColumn,
+      insertNewColumnIntoCache,
+      updateColumnInCache
        } = useColumns();
   
     const { 
@@ -51,17 +85,68 @@ const Board = () => {
       isPending: tasksIsPending, 
       isError: tasksIsError, 
       error: tasksError,
+      insertTaskIntoCache
        } = useTasks();
-  
-    if (columnsIsPending || tasksIsPending ) return <span>Loading...</span>;
-    if (columnsIsError || tasksIsError) {
+       
+    
+    useEffect (() => {
+      socket.emit('leaveRoom');
+
+      if(!activeBoard){
+        setActiveBoard(boards?.[0] ?? null);
+      }else if(activeBoard){
+        setActiveBoard(boards?.find(b => b.id === activeBoard.id) ?? null);
+          /**
+           * issue: activeBoard is not getting the updated Column Ids but boards is
+           * boards is set from the query
+           * active board is set in this use effect or through button click
+           *  -> if boards changes then we need to update the activeBoard
+           */
+      }
+      console.log('runs');
+      console.log(boards);
+      console.log(activeBoard);
+    }, [boards])
+
+    let joined = false;
+
+    useEffect(() => {
+      
+
+      if (!joined && activeBoard) {
+        socket.emit("joinRoom", activeBoard?.id);
+        joined = true;
+      }
+      socket.on("add:task", insertTaskIntoCache);
+      socket.on("add:column", insertNewColumnIntoCache);
+      socket.on("update:column", updateColumnInCache);
+
+      console.log("Listeners now:");
+      console.log("tasks:", socket.listeners("add:task").length);
+      console.log("columns:", socket.listeners("add:column").length);
+      console.log("update:", socket.listeners("update:column").length);
+
+      return () => {
+        socket.off("add:task", insertTaskIntoCache);
+        socket.off("add:column", insertNewColumnIntoCache);
+        socket.off("update:column", updateColumnInCache);
+
+        console.log("After cleanup:");
+        console.log("tasks:", socket.listeners("add:task").length);
+        console.log("columns:", socket.listeners("add:column").length);
+        console.log("update:", socket.listeners("update:column").length);
+
+        socket.emit('leaveRoom', activeBoard?.id);
+      }
+
+    },[activeBoard])
+
+    if (columnsIsPending || tasksIsPending || boardsIsPending ) return <span>Loading...</span>;
+    if (columnsIsError || tasksIsError || boardsIsError) {
       return <span>Error! {tasksError?.message} {columnsError?.message}</span>
     }
-    
-    const board: ColumnDetailed[] = columns.map(col => {
-      const tasksDetails: Task[] = col.taskIds.map(id => tasks.find(t => t.id === id)).filter(t => t != undefined);
-      return({ ...col, tasks: tasksDetails })
-    })
+
+    const board = fillBoardDetails(activeBoard, columns, tasks);
 
     const findContainer = (id: string | null): String | null => {
       if(!id) return null;
@@ -153,13 +238,47 @@ const Board = () => {
       easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)'
     }
 
+  if(!board || !activeBoard) return null
+  const handleAddBoard = () => {
+    console.log('createNew');
+    const newBoard: NewBoard = {
+      columnIds: []
+    }
+    createBoard.mutate(newBoard)
+  }
+  /*
+  const handleChangeActiveBoard = (b: Board) => {
+    socket.emit('leaveRoom', activeBoard.id)
+    setActiveBoard(b);
+  }
+    */
   return (
-    <DndContext onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd} collisionDetection={closestCenter} sensors={sensors}>
+    <>
+    <div className="flex space-x-2 border-b border-gray-300">
+      {boards.map((board) => (
+        <button
+          key={board.id}
+          onClick={() => setActiveBoard(board)}
+          className={`px-4 py-2 rounded-t-md ${
+            activeBoard?.id === board.id
+              ? "bg-white border border-b-0 border-gray-300 font-semibold"
+              : "bg-gray-100 hover:bg-gray-200"
+          }`}
+        >
+          {board.id}
+        </button>
+      ))}
+      <button
+        onClick={handleAddBoard}>
+        +
+        </button>
+</div>
+      <DndContext onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd} collisionDetection={closestCenter} sensors={sensors}>
         <ModalProvider>
           <div>
             <div className="flex gap-3 p-2">
-              {board.map(col => <ColumnGrid key={col.id} column={col}/>)}
-              <ColumnAddList />
+              {board?.columns?.map(col => <ColumnGrid key={col.id} column={col}/>)}
+              <ColumnAddList board={activeBoard}/>
             </div>
             <Modal />
           </div>
@@ -169,9 +288,11 @@ const Board = () => {
             ) : null}
           </DragOverlay>
         </ModalProvider>
-  </DndContext>
+      </DndContext>
+    </>
+    
   )
   
 }
 
-export default Board
+export default KanbanBoard
