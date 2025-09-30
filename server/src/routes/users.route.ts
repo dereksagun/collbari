@@ -9,8 +9,9 @@ router.get('/', async (req: Request, res: Response<User[]>) => {
 });
 
 router.post('/', async (req: Request<any, any, NewUser>, res: Response<User>) => {
-  const newUser: User = await UserService.createUser(req.body);
-  res.json(newUser);
-});
+  const newUser = await UserService.createUser(req.body);
+  res.json(newUser)
+})
+
 
 export default router

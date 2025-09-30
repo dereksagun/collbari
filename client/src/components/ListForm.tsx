@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useColumns } from "../features/columns/hooks";
+import { useColumns } from "../hooks/useColumns";
 import { useModal } from "./Modal";
 import type { Board } from "../types";
 

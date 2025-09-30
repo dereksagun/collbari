@@ -6,7 +6,9 @@ import { v4 as uuidv4 } from 'uuid';
 import taskRouter from './routes/tasks.route';
 import columnRouter from './routes/columns.route';
 import boardRouter from './routes/boards.route';
-import userServie from './routes/users.route';
+import userRouter from './routes/users.route';
+import loginRouter from './routes/login.route';
+
 import { Server } from "socket.io";
 
 
@@ -26,7 +28,8 @@ app.get('/api/ping', (req, res) => {
 app.use('/api/tasks', taskRouter);
 app.use('/api/columns', columnRouter);
 app.use('/api/boards', boardRouter);
-app.use('/api/users', userServie);
+app.use('/register', userRouter);
+app.use('/api/auth/login', loginRouter);
 
 
 io.on('connect', (socket) => {
@@ -40,24 +43,24 @@ io.on('connect', (socket) => {
   socket.on('joinRoom', (boardId)=> {
     socket.join(boardId);
     console.log(`Socket ${socket.id} joined room: ${boardId}`);
-
-    socket.on('add:task', data => {
-      console.log(`Recieved add:task`);
-      console.log(data);
-      socket.to(boardId).emit('add:task', data);
-    });
-
-    socket.on('add:column', data => {
-      console.log(`Recieved add:column`);
-      console.log(data);
-      socket.to(boardId).emit('add:column', data);
-    })
-
-    socket.on('update:column', (column: Column) => {
-      console.log('Received update:column');
-      socket.to(boardId).emit('update:column', column);
-    })
     
+  })
+
+  socket.on('add:task', data => {
+    console.log(`Recieved add:task`);
+    console.log(data);
+    socket.to(data.boardId).emit('add:task', data);
+  });
+
+  socket.on('add:column', data => {
+    console.log(`Recieved add:column`);
+    console.log(data);
+    socket.to(data.boardId).emit('add:column', data);
+  })
+
+  socket.on('update:column', data => {
+    console.log('Received update:column');
+    socket.to(data.boardId).emit('update:column', data.column);
   })
 
   socket.on('disconnect', () => {

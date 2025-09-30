@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import type { Column, Status, NewTask} from "../types";
-import { useTasks } from "../features/tasks/hooks";
+import { useTasks } from "../hooks/useTasks";
 import { useModal } from "./Modal";
 
-export const TaskForm = ({column}: {column: Column}) => {
+export const TaskForm = ({column, boardId}: {boardId: string, column: Column}) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState<Status>('not started')
-  
 
   const { createTask } = useTasks();
 
@@ -16,7 +15,7 @@ export const TaskForm = ({column}: {column: Column}) => {
   const addTask = async (event: React.SyntheticEvent) => {
     event.preventDefault();
     const newTask: NewTask = { title, description, status }
-    createTask.mutate({column, task:newTask});
+    createTask.mutate({column, task:newTask, boardId});
     setTitle('');
     setDescription('');
     closeModal();

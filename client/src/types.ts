@@ -34,6 +34,8 @@ export interface ColumnDetailed extends Column {
 export interface Board {
   id: ID,
   columnIds: ID[];
+  owner: ID;
+  sharedWith: ID[];
 }
 
 export type NewBoard = Omit<Board, 'id'>;
@@ -43,8 +45,21 @@ export interface BoardDetailed extends Board {
 }
 
 export interface User {
-  id: ID,
-  boardIds: ID[];
+  id: ID;
+  email: string;
+  username: string;
+  passwordHash: string;
 }
 
-export type NewUser = Omit<User, 'id'>;
+export interface NewUser extends Omit<User, 'id' | 'passwordHash'> {
+  password: string;
+}
+
+export type LoginInformation = Omit<NewUser, 'id' | 'username'>
+
+export type UserNonSensitive = Omit<User, 'passwordHash'>
+
+export interface loginPayload {
+  user: UserNonSensitive
+  token: string
+}

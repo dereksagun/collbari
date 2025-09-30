@@ -5,4 +5,3 @@ export const socket = io({
   transports: ["websocket"], // optional: helps avoid polling fallback
 });
 
-

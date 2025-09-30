@@ -1,4 +1,4 @@
-import type { ColumnDetailed } from "../types";
+import type { Column, ColumnDetailed } from "../types";
 import TaskCard from "./TaskCard";
 import { useModal } from "./Modal";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
@@ -10,7 +10,7 @@ interface columnProp {
   column: ColumnDetailed
 }
 
-const ColumnGrid = ({column} : columnProp) => {
+const ColumnGrid = ({boardId, column}: {boardId: string, column: ColumnDetailed}) => {
 
   const { openModal } = useModal();
   const { setNodeRef } = useDroppable({
@@ -18,7 +18,7 @@ const ColumnGrid = ({column} : columnProp) => {
   });
 
   const handleAddTask = () => {
-    openModal({ type: 'ADD_TASK', props: { column: column } });
+    openModal({ type: 'ADD_TASK', props: { column: column, boardId: boardId} });
   }
   
   const tasksIds = column.tasks.map(t => t.id);

@@ -3,14 +3,14 @@ import ColumnGrid from "./Column"
 import { ModalProvider, useModal } from '../components/Modal'
 import TaskCard from "./TaskCard"
 import { arrayMove } from "@dnd-kit/sortable"
-import type { BoardDetailed, Column, ColumnDetailed, NewBoard, Task } from "../types"
+import type { BoardDetailed, Column, ColumnDetailed, loginPayload, NewBoard, Task, User, UserNonSensitive } from "../types"
 import { useEffect, useState } from "react"
-import { useColumns } from "../features/columns/hooks"
-import { useTasks } from "../features/tasks/hooks"
+import { useColumns } from "../hooks/useColumns"
+import { useTasks } from "../hooks/useTasks"
 import ListForm from "./ListForm"
 import { TaskForm } from "./TaskForm"
 import { socket } from "../services/socket"
-import { useBoards } from "../features/boards/hooks"
+import { useBoards } from "../hooks/useBoards"
 import type { Board } from "../types"
 import { useQueryClient } from "@tanstack/react-query"
 
@@ -33,7 +33,7 @@ const Modal = () => {
   const { modal } = useModal();
   switch (modal.type) {
     case "ADD_TASK":
-      return <TaskForm column={modal.props.column}/>
+      return <TaskForm column={modal.props.column} boardId={modal.props.boardId}/>
     case "ADD_COLUMN":
       return <ListForm board={modal.props.board}/>
   }
@@ -54,7 +54,7 @@ const fillBoardDetails = (activeBoard: Board | null, columns: Column[] | undefin
   return board;
 }
 
-const KanbanBoard = () => {
+const KanbanBoard = ({user}: {user:UserNonSensitive}) => {
 
     const sensors = useSensors(useSensor(PointerSensor));
     const [activeTask, setActiveTask] = useState<Task | null>(null);
@@ -67,7 +67,8 @@ const KanbanBoard = () => {
       isError: boardsIsError,
       error: boardsError,
       createBoard,
-      updateBoard
+      updateBoard,
+      refetchBoards
     } = useBoards();
     
     const { 
@@ -77,7 +78,8 @@ const KanbanBoard = () => {
       error: columnsError,
       updateColumn,
       insertNewColumnIntoCache,
-      updateColumnInCache
+      updateColumnInCache,
+      refetchColumns
        } = useColumns();
   
     const { 
@@ -85,7 +87,8 @@ const KanbanBoard = () => {
       isPending: tasksIsPending, 
       isError: tasksIsError, 
       error: tasksError,
-      insertTaskIntoCache
+      insertTaskIntoCache,
+      refetchTasks
        } = useTasks();
        
     
@@ -103,11 +106,8 @@ const KanbanBoard = () => {
            *  -> if boards changes then we need to update the activeBoard
            */
       }
-      console.log('runs');
-      console.log(boards);
-      console.log(activeBoard);
-    }, [boards])
-
+    }, [user, boards, activeBoard])
+    console.log('boards', boards)
     let joined = false;
 
     useEffect(() => {
@@ -121,20 +121,10 @@ const KanbanBoard = () => {
       socket.on("add:column", insertNewColumnIntoCache);
       socket.on("update:column", updateColumnInCache);
 
-      console.log("Listeners now:");
-      console.log("tasks:", socket.listeners("add:task").length);
-      console.log("columns:", socket.listeners("add:column").length);
-      console.log("update:", socket.listeners("update:column").length);
-
       return () => {
         socket.off("add:task", insertTaskIntoCache);
         socket.off("add:column", insertNewColumnIntoCache);
         socket.off("update:column", updateColumnInCache);
-
-        console.log("After cleanup:");
-        console.log("tasks:", socket.listeners("add:task").length);
-        console.log("columns:", socket.listeners("add:column").length);
-        console.log("update:", socket.listeners("update:column").length);
 
         socket.emit('leaveRoom', activeBoard?.id);
       }
@@ -147,6 +137,7 @@ const KanbanBoard = () => {
     }
 
     const board = fillBoardDetails(activeBoard, columns, tasks);
+    if(!board || !activeBoard) return null
 
     const findContainer = (id: string | null): String | null => {
       if(!id) return null;
@@ -161,6 +152,11 @@ const KanbanBoard = () => {
   
     }
     
+    const handleBoardUpdated = () => {
+      refetchColumns();
+      refetchTasks();
+    }
+
     const handleDragOver = (event: DragOverEvent) => {
       const active = String(event.active.id);
       const over = String(event.over?.id);
@@ -191,8 +187,8 @@ const KanbanBoard = () => {
         taskIds: toCol.taskIds
       }    
   
-      updateColumn.mutate(updatedFromCol);
-      updateColumn.mutate(updatedToCol);
+      updateColumn.mutate({column: updatedFromCol, boardId: board.id});
+      updateColumn.mutate({column: updatedToCol, boardId: board.id});
   
   
     }
@@ -219,8 +215,7 @@ const KanbanBoard = () => {
           ...column,
           taskIds: updateTaskIds
         };
-  
-        updateColumn.mutate(updatedColumn);
+        updateColumn.mutate({column: updatedColumn, boardId: board.id});
         
       }
       console.log('end draggin');
@@ -238,27 +233,30 @@ const KanbanBoard = () => {
       easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)'
     }
 
-  if(!board || !activeBoard) return null
   const handleAddBoard = () => {
     console.log('createNew');
     const newBoard: NewBoard = {
-      columnIds: []
+      columnIds: [],
+      owner: user.id,
+      sharedWith: []
     }
     createBoard.mutate(newBoard)
   }
-  /*
-  const handleChangeActiveBoard = (b: Board) => {
-    socket.emit('leaveRoom', activeBoard.id)
-    setActiveBoard(b);
+
+  const handleBoardChange = (board: Board) => {
+    setActiveBoard(board);
+    refetchBoards();
+    refetchColumns();
+    refetchTasks();
   }
-    */
+
   return (
     <>
     <div className="flex space-x-2 border-b border-gray-300">
       {boards.map((board) => (
         <button
           key={board.id}
-          onClick={() => setActiveBoard(board)}
+          onClick={() => handleBoardChange(board)}
           className={`px-4 py-2 rounded-t-md ${
             activeBoard?.id === board.id
               ? "bg-white border border-b-0 border-gray-300 font-semibold"
@@ -277,7 +275,7 @@ const KanbanBoard = () => {
         <ModalProvider>
           <div>
             <div className="flex gap-3 p-2">
-              {board?.columns?.map(col => <ColumnGrid key={col.id} column={col}/>)}
+              {board?.columns?.map(col => <ColumnGrid key={col.id} column={col} boardId={board.id}/>)}
               <ColumnAddList board={activeBoard}/>
             </div>
             <Modal />
