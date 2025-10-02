@@ -3,6 +3,7 @@ import userService from '../api/registration';
 import type { Board, User, UserNonSensitive } from '../types';
 import { Autocomplete, Box, Button, Chip, InputLabel, MenuItem, OutlinedInput, Select, type SelectChangeEvent } from '@mui/material';
 import { useBoards } from '../hooks/useBoards';
+import { useModal } from './Modal';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -21,6 +22,7 @@ const ShareWithForm = ({board}: {board: Board}) => {
   const [selectableUsers, setSelectableUsers] = useState<User[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<string []>([])
   const { updateBoard } = useBoards();
+  const { closeModal } = useModal();
 
   useEffect(() => {
     getUsers();
@@ -48,12 +50,14 @@ const ShareWithForm = ({board}: {board: Board}) => {
 
   }
 
-  const handleSubmit = async (): Promise<void> => {
+  const handleSubmit = async (event: React.SyntheticEvent): Promise<void> => {
+    event.preventDefault();
     const newBoard: Board = {
       ...board,
       sharedWith: selectedUsers
     }
     updateBoard.mutate(newBoard);
+    closeModal();
   }
 
   return (
@@ -90,7 +94,7 @@ const ShareWithForm = ({board}: {board: Board}) => {
           )}
         </Select>
         <br></br>
-        <span><Button variant="outlined">Cancel</Button> <Button variant="contained">Share</Button></span>
+        <span><Button onClick={closeModal} variant="outlined">Cancel</Button> <Button type="submit" variant="contained">Share</Button></span>
         
         
       </form>

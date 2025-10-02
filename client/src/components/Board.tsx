@@ -38,8 +38,8 @@ const Modal = () => {
       return <TaskForm column={modal.props.column} boardId={modal.props.boardId}/>
     case "ADD_COLUMN":
       return <ListForm board={modal.props.board}/>
-      case "SHARE_BOARD":
-        return <ShareWithForm board={modal.props.board}/>  
+    case "SHARE_BOARD":
+      return <ShareWithForm board={modal.props.board}/>  
   }
 }
 const fillBoardDetails = (activeBoard: Board | null, columns: Column[] | undefined, tasks: Task[] | undefined): BoardDetailed | null => {
@@ -58,6 +58,19 @@ const fillBoardDetails = (activeBoard: Board | null, columns: Column[] | undefin
   return board;
 }
 
+const ShareButton = ({board}:{board: Board}) => {
+  const {openModal} = useModal();
+
+  const handleOpenShareForm = (): void => {
+    openModal({type: "SHARE_BOARD", props: {board}})
+  }
+  return (
+    <>
+      <Button onClick={handleOpenShareForm} variant="contained">Share</Button>
+    </>
+  )
+
+}
 
 
 
@@ -271,7 +284,7 @@ const KanbanBoard = ({user}: {user:UserNonSensitive}) => {
             {activeBoard 
               ?
                 <>
-                  <Button variant="contained">Share</Button>
+                  <ShareButton board={activeBoard}/>
                   <div className="flex gap-3 p-2">
                     {board?.columns?.map(col => <ColumnGrid key={col.id} column={col} boardId={board.id}/>)}
                     {activeBoard ? <ColumnAddList board={activeBoard}/> : null}
