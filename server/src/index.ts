@@ -28,7 +28,7 @@ app.get('/api/ping', (req, res) => {
 app.use('/api/tasks', taskRouter);
 app.use('/api/columns', columnRouter);
 app.use('/api/boards', boardRouter);
-app.use('/register', userRouter);
+app.use('/api/register', userRouter);
 app.use('/api/auth/login', loginRouter);
 
 

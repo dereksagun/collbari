@@ -1,4 +1,20 @@
 /* From Uiverse.io by 00Kubi */ 
+/*
+.add-task-form {
+  background-color: rgb(255, 255, 255);
+  border-radius: 8px;
+  display: flex;
+  justify-content: left;
+  padding: 20px 30px;
+  gap: 13px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.062);
+  margin: 10px;
+  width:fit-content
+}
+*/
+
 .add-task-form {
   background-color: rgb(255, 255, 255);
   border-radius: 8px;
@@ -120,4 +136,16 @@
 .input-group:hover .inputLabel, 
 .input-textbox:focus {
   color: #05060fc2;
+}
+
+.modal {
+  position: fixed; /* stays in place even when scrolling */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* offset by half its width/height */
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  z-index: 1000; /* above other content */
 }

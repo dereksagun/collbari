@@ -3,8 +3,8 @@ import ColumnGrid from "./Column"
 import { ModalProvider, useModal } from '../components/Modal'
 import TaskCard from "./TaskCard"
 import { arrayMove } from "@dnd-kit/sortable"
-import type { BoardDetailed, Column, ColumnDetailed, loginPayload, NewBoard, Task, User, UserNonSensitive } from "../types"
-import { useEffect, useState } from "react"
+import type { BoardDetailed, Column, NewBoard, Task, UserNonSensitive } from "../types"
+import { act, useEffect, useRef, useState } from "react"
 import { useColumns } from "../hooks/useColumns"
 import { useTasks } from "../hooks/useTasks"
 import ListForm from "./ListForm"
@@ -13,6 +13,8 @@ import { socket } from "../services/socket"
 import { useBoards } from "../hooks/useBoards"
 import type { Board } from "../types"
 import { useQueryClient } from "@tanstack/react-query"
+import ShareWithForm from "./ShareWithForm"
+import { Button } from "@mui/material"
 
 const ColumnAddList = ({board} : {board: Board}) => {
   const { openModal } = useModal();
@@ -36,6 +38,8 @@ const Modal = () => {
       return <TaskForm column={modal.props.column} boardId={modal.props.boardId}/>
     case "ADD_COLUMN":
       return <ListForm board={modal.props.board}/>
+      case "SHARE_BOARD":
+        return <ShareWithForm board={modal.props.board}/>  
   }
 }
 const fillBoardDetails = (activeBoard: Board | null, columns: Column[] | undefined, tasks: Task[] | undefined): BoardDetailed | null => {
@@ -54,12 +58,15 @@ const fillBoardDetails = (activeBoard: Board | null, columns: Column[] | undefin
   return board;
 }
 
+
+
+
 const KanbanBoard = ({user}: {user:UserNonSensitive}) => {
 
     const sensors = useSensors(useSensor(PointerSensor));
     const [activeTask, setActiveTask] = useState<Task | null>(null);
     const [activeBoard, setActiveBoard] = useState<Board | null>(null);
-    const queryClient = useQueryClient();
+    const modalRef = useRef<HTMLDialogElement | null> (null);
 
     const {
       data: boards,
@@ -91,27 +98,9 @@ const KanbanBoard = ({user}: {user:UserNonSensitive}) => {
       refetchTasks
        } = useTasks();
        
-    
-    useEffect (() => {
-      socket.emit('leaveRoom');
-
-      if(!activeBoard){
-        setActiveBoard(boards?.[0] ?? null);
-      }else if(activeBoard){
-        setActiveBoard(boards?.find(b => b.id === activeBoard.id) ?? null);
-          /**
-           * issue: activeBoard is not getting the updated Column Ids but boards is
-           * boards is set from the query
-           * active board is set in this use effect or through button click
-           *  -> if boards changes then we need to update the activeBoard
-           */
-      }
-    }, [user, boards, activeBoard])
-    console.log('boards', boards)
     let joined = false;
 
     useEffect(() => {
-      
 
       if (!joined && activeBoard) {
         socket.emit("joinRoom", activeBoard?.id);
@@ -128,16 +117,24 @@ const KanbanBoard = ({user}: {user:UserNonSensitive}) => {
 
         socket.emit('leaveRoom', activeBoard?.id);
       }
-
     },[activeBoard])
-
+    
+    useEffect (() => {
+      if(!activeBoard){
+        setActiveBoard(boards?.[0] ?? null);
+      } else {
+        setActiveBoard(boards?.find(b => b.id === activeBoard.id) || null)
+      }
+    }, [boards])
+    
     if (columnsIsPending || tasksIsPending || boardsIsPending ) return <span>Loading...</span>;
     if (columnsIsError || tasksIsError || boardsIsError) {
       return <span>Error! {tasksError?.message} {columnsError?.message}</span>
     }
 
     const board = fillBoardDetails(activeBoard, columns, tasks);
-    if(!board || !activeBoard) return null
+    console.log('board', board);
+    
 
     const findContainer = (id: string | null): String | null => {
       if(!id) return null;
@@ -147,14 +144,8 @@ const KanbanBoard = ({user}: {user:UserNonSensitive}) => {
       if(column) return column; //new list
   
       const columnId = columns.find(col => col.taskIds.includes(id))?.id; //id is a taskId so we return the colId
-  
       return columnId ? columnId : null;
   
-    }
-    
-    const handleBoardUpdated = () => {
-      refetchColumns();
-      refetchTasks();
     }
 
     const handleDragOver = (event: DragOverEvent) => {
@@ -187,8 +178,8 @@ const KanbanBoard = ({user}: {user:UserNonSensitive}) => {
         taskIds: toCol.taskIds
       }    
   
-      updateColumn.mutate({column: updatedFromCol, boardId: board.id});
-      updateColumn.mutate({column: updatedToCol, boardId: board.id});
+      updateColumn.mutate({column: updatedFromCol, boardId: board?.id || ''});
+      updateColumn.mutate({column: updatedToCol, boardId: board?.id || ''});
   
   
     }
@@ -215,7 +206,7 @@ const KanbanBoard = ({user}: {user:UserNonSensitive}) => {
           ...column,
           taskIds: updateTaskIds
         };
-        updateColumn.mutate({column: updatedColumn, boardId: board.id});
+        updateColumn.mutate({column: updatedColumn, boardId: board?.id || ''});
         
       }
       console.log('end draggin');
@@ -234,7 +225,6 @@ const KanbanBoard = ({user}: {user:UserNonSensitive}) => {
     }
 
   const handleAddBoard = () => {
-    console.log('createNew');
     const newBoard: NewBoard = {
       columnIds: [],
       owner: user.id,
@@ -243,12 +233,14 @@ const KanbanBoard = ({user}: {user:UserNonSensitive}) => {
     createBoard.mutate(newBoard)
   }
 
-  const handleBoardChange = (board: Board) => {
-    setActiveBoard(board);
-    refetchBoards();
-    refetchColumns();
+  const handleBoardChange = async (boardz: Board) => {
     refetchTasks();
+    refetchColumns();
+    refetchBoards();
+    
+    setActiveBoard(boards?.find(b => b.id === boardz.id) || null)
   }
+  
 
   return (
     <>
@@ -266,19 +258,30 @@ const KanbanBoard = ({user}: {user:UserNonSensitive}) => {
           {board.id}
         </button>
       ))}
-      <button
-        onClick={handleAddBoard}>
+      <button onClick={handleAddBoard}>
         +
-        </button>
-</div>
+      </button>
+    </div>
       <DndContext onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd} collisionDetection={closestCenter} sensors={sensors}>
         <ModalProvider>
           <div>
-            <div className="flex gap-3 p-2">
-              {board?.columns?.map(col => <ColumnGrid key={col.id} column={col} boardId={board.id}/>)}
-              <ColumnAddList board={activeBoard}/>
-            </div>
-            <Modal />
+            <dialog open ref={modalRef} className=" backdrop:bg-black/85">
+              <Modal />
+            </dialog>
+            {activeBoard 
+              ?
+                <>
+                  <Button variant="contained">Share</Button>
+                  <div className="flex gap-3 p-2">
+                    {board?.columns?.map(col => <ColumnGrid key={col.id} column={col} boardId={board.id}/>)}
+                    {activeBoard ? <ColumnAddList board={activeBoard}/> : null}
+                  </div>
+                </>
+              :
+                null
+            }
+            
+            
           </div>
           <DragOverlay dropAnimation={dropAnimation}>
             {activeTask ? (

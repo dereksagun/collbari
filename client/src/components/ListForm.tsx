@@ -8,7 +8,7 @@ const ListForm = ({board}: {board: Board}) => {
   const [name, setName] = useState('');
   const { closeModal } = useModal();
   const { createColumn } = useColumns();
-  console.log(board);
+  
   const handleAddColumn = async (event: React.SyntheticEvent) => {
     event.preventDefault();
     const newColumn = { name, taskIds: [] }
@@ -19,7 +19,7 @@ const ListForm = ({board}: {board: Board}) => {
 
 
   return (
-    <div className='add-task-form'>
+    <div className='add-task-form modal'>
       <form onSubmit={handleAddColumn}>
         <div className="inputLabel">Add List</div>
         <div className='input-group'>

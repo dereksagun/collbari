@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+
+import { useRef, useState } from "react";
 import type { Column, Status, NewTask} from "../types";
 import { useTasks } from "../hooks/useTasks";
 import { useModal } from "./Modal";
@@ -21,9 +22,10 @@ export const TaskForm = ({column, boardId}: {boardId: string, column: Column}) =
     closeModal();
 
   }
+  const taskFormRef = useRef<HTMLDialogElement | null>(null);
 
   return(
-    <div className='add-task-form'>
+      <div className='add-task-form modal'>
       <form onSubmit={addTask}>
         <div className="inputLabel">Add Task</div>
         <div className='input-group'>
@@ -48,6 +50,7 @@ export const TaskForm = ({column, boardId}: {boardId: string, column: Column}) =
         <span><button onClick={closeModal} className="declineButton" type="button">Cancel</button> <button className="acceptButton" type="submit">Submit</button></span>
       </form>
     </div>
+    
     
   )
 }
