@@ -4,11 +4,9 @@ import { useModal } from "./Modal";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useDroppable } from "@dnd-kit/core";
 import TaskCardDraggable from "./TaskCardDraggable";
+import Card from "@mui/material/Card";
 
 
-interface columnProp {
-  column: ColumnDetailed
-}
 
 const ColumnGrid = ({boardId, column}: {boardId: string, column: ColumnDetailed}) => {
 
@@ -25,7 +23,7 @@ const ColumnGrid = ({boardId, column}: {boardId: string, column: ColumnDetailed}
 
   return (
     <div >
-      <div className="column flex flex-col gap-y-3 p-5 w-[300px]" ref={setNodeRef}>
+      <Card className="column flex flex-col gap-y-3 p-5 w-[300px]" ref={setNodeRef}>
         {column.name}
           <SortableContext items={tasksIds} strategy={verticalListSortingStrategy}>
             {column.tasks.map(task => (
@@ -35,7 +33,7 @@ const ColumnGrid = ({boardId, column}: {boardId: string, column: ColumnDetailed}
             ))}
           </SortableContext>
         <button onClick={handleAddTask} className="add-task-button">+ Add another</button>
-      </div>
+      </Card>
     </div>
   )
 }

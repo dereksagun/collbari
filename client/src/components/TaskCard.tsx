@@ -1,3 +1,4 @@
+import { Card } from "@mui/material";
 import { forwardRef } from "react";
 
 interface TaskCardProps {
@@ -7,11 +8,13 @@ interface TaskCardProps {
 
 const TaskCard =forwardRef<HTMLDivElement, TaskCardProps>(({style, children, ...props}, ref) => {
 
-  
+
   return (
-    <div className='task-card' style={style} ref={ref} {...props}>
-      <h5>{children}</h5>
-    </div>
+    <>
+      <Card variant="outlined" className='task-card' style={style} ref={ref} {...props}>       
+        <h5>{children}</h5> 
+      </Card>
+    </>
   )
 })
 

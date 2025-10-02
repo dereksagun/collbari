@@ -14,7 +14,7 @@ import { useBoards } from "../hooks/useBoards"
 import type { Board } from "../types"
 import { useQueryClient } from "@tanstack/react-query"
 import ShareWithForm from "./ShareWithForm"
-import { Button } from "@mui/material"
+import { Button } from "@mui/material";
 
 const ColumnAddList = ({board} : {board: Board}) => {
   const { openModal } = useModal();
@@ -71,9 +71,43 @@ const ShareButton = ({board}:{board: Board}) => {
   )
 
 }
+/*
+const BoardTabs = ({activeBoard, boards, handleBoardChange}: {activeBoard: Board, boards: Board[], handleBoardChange: (board: Board) => Promise<void>}) => {
 
+  {boards.map((board) => (
+    <button
+      key={board.id}
+      onClick={() => handleBoardChange(board)}
+      className={`px-4 py-2 rounded-t-md ${
+        activeBoard?.id === board.id
+          ? "bg-white border border-b-0 border-gray-300 font-semibold"
+          : "bg-gray-100 hover:bg-gray-200"
+      }`}
+    >
+      {board.id}
+    </button>
+  ))}
+  <button onClick={handleAddBoard}>
+    +
+  </button>
 
+  return (
+    <TabContext value={value}>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <TabList onChange={handleBoardChange} aria-label="lab API tabs example">
+          <Tab label="Item One" value="1" />
+          <Tab label="Item Two" value="2" />
+          <Tab label="Item Three" value="3" />
+        </TabList>
+      </Box>
+      <TabPanel value="1">Item One</TabPanel>
+      <TabPanel value="2">Item Two</TabPanel>
+      <TabPanel value="3">Item Three</TabPanel>
+    </TabContext>
+  )
+}
 
+*/
 const KanbanBoard = ({user}: {user:UserNonSensitive}) => {
 
     const sensors = useSensors(useSensor(PointerSensor));
@@ -246,6 +280,7 @@ const KanbanBoard = ({user}: {user:UserNonSensitive}) => {
     createBoard.mutate(newBoard)
   }
 
+
   const handleBoardChange = async (boardz: Board) => {
     refetchTasks();
     refetchColumns();
@@ -253,7 +288,6 @@ const KanbanBoard = ({user}: {user:UserNonSensitive}) => {
     
     setActiveBoard(boards?.find(b => b.id === boardz.id) || null)
   }
-  
 
   return (
     <>
