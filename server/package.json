@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-  "start": "node build/src/index.js",
+    "start": "node build/src/index.js",
     "dev": "ts-node-dev --respawn --watch src src/index.ts"
   },
   "keywords": [],
@@ -24,6 +24,7 @@
   "dependencies": {
     "@types/jsonwebtoken": "^9.0.10",
     "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",

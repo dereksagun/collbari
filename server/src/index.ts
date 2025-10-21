@@ -9,6 +9,7 @@ import userRouter from './routes/users.route';
 import loginRouter from './routes/login.route';
 import mongoose from 'mongoose';
 import config from './utils/config'
+import cors from 'cors'
 
 import { Server } from "socket.io";
 
@@ -17,6 +18,14 @@ const { createServer } = require('node:http');
 const app = express();
 const server = createServer(app);
 const io = new Server(server)
+
+app.use(cors({
+  origin: [
+    'https://collabri-frontend.onrender.com',
+    'http://localhost:5173'
+  ],
+  credentials: true // if needed
+}));
 
 
 if (!config.MONGODB_URI) {
