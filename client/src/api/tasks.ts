@@ -1,7 +1,8 @@
 import axios from 'axios'
 import type { Task, NewTask } from '../types';
 
-const baseUrl = '/api/tasks';
+const API_BASE = import.meta.env.VITE_API_URL || ''
+const baseUrl = `${API_BASE}/api/tasks`;
 
 const getAll = async (): Promise<Task[]> => {
   const { data } = await axios.get<Task[]>(baseUrl);

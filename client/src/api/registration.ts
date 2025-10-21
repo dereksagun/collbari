@@ -1,7 +1,8 @@
 import axios from 'axios'
 import type { NewUser, User } from '../types'
 
-const baseUrl = '/api/register'
+const API_BASE = import.meta.env.VITE_API_URL || ''
+const baseUrl = `${API_BASE}/api/register`
 
 const getUsers = async (): Promise<User[]> => {
   const { data } = await axios.get<User[]>(baseUrl);

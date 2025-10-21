@@ -1,7 +1,8 @@
 import axios from 'axios';
 import type { Board, Column, NewBoard } from '../types';
 
-const baseUrl = '/api/boards';
+const API_BASE = import.meta.env.VITE_API_URL || ''
+const baseUrl = `${API_BASE}/api/boards`;
 let userToken: string = '';
 
 const setToken = (token: string):void => {

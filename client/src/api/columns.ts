@@ -1,7 +1,8 @@
 import axios from 'axios'
 import type { Column, NewColumn, Task } from '../types';
 
-const baseUrl = '/api/columns';
+const API_BASE = import.meta.env.VITE_API_URL || ''
+const baseUrl = `${API_BASE}/api/columns`;
 
 const getAll = async (): Promise<Column[]> => {
   const { data } = await axios.get<Column[]>(baseUrl);
