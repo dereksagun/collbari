@@ -14,7 +14,7 @@ interface SocketHandlers {
 
 export const connectSocket = (handlers: SocketHandlers): Socket => {
   if(!socket) {
-    socket = io({
+    socket = io(import.meta.env.VITE_API_URL || '', {
       path: "/socket.io", // default, but explicit is safer
       transports: ["websocket"], // optional: helps avoid polling fallback
     });
