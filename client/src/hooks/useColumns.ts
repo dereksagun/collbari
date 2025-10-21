@@ -3,7 +3,7 @@ import columnService from '../api/columns';
 import boardService from '../api/boards';
 
 import type { Board, Column, NewColumn } from "../types";
-import { socket } from "../services/socket";
+import { emitAddColumn, emitUpdateColumn} from "../services/socket";
 import { queryKeys } from "./queryKeys";
 
 export const useColumns = () => {
@@ -21,8 +21,7 @@ export const useColumns = () => {
         return {addedColumn, updatedBoard}
       },
       onSuccess: async ({addedColumn, updatedBoard}: {addedColumn: Column, updatedBoard: Board}) => {
-        socket.emit('add:column', {
-          socketId: socket.id,
+        emitAddColumn({
           addedColumn,
           updatedBoard,
           boardId: updatedBoard.id
@@ -60,7 +59,6 @@ export const useColumns = () => {
         if(onMutateResult){
            await queryClient.setQueryData([queryKeys.columns], onMutateResult.previousColumn);
         }
-         
       },
       onSettled: async () => {
         // always refetch final truth
@@ -71,15 +69,12 @@ export const useColumns = () => {
           column,
           boardId: variables.boardId
         }
-        
-        socket.emit('update:column', data);
+        emitUpdateColumn(data);
       }
 
     });
 
   const insertNewColumnIntoCache = ({addedColumn, updatedBoard} : {addedColumn: Column, updatedBoard: Board}) => {
-    console.log('addedColumn', addedColumn);
-    console.log('updatedBoard', updatedBoard);
     queryClient.setQueryData<Column[]>([queryKeys.columns], (old) => {
       return old ? [...old, addedColumn] : [addedColumn];
     });
@@ -96,7 +91,6 @@ export const useColumns = () => {
       old[idx] = column;
       return old;
     })
-
   }
 
   const refetchColumns = () => {
@@ -104,8 +98,6 @@ export const useColumns = () => {
       queryKey: [queryKeys.columns]
     })
   }
-
-
 
   return {
     ...queryColumns,

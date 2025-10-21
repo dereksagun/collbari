@@ -68,15 +68,56 @@
   border-radius: inherit;
   max-width: inherit;
   transition: 200ms ease-in-out;
+
+
+  flex: 1;  take up remaining space below header 
+  display: flex;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: linear-gradient(160deg, #a1c4fd 0%, #c2e9fb 100%);
+  overflow-x: auto; /* horizontal scroll for wide boards 
+  overflow-y: hidden;
 }
 */
+.kanban-background {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  /*gap: 1.5rem;*/
+  padding: 1.5rem 0 0 0;
+  background: linear-gradient(180deg, #F8FAFC 0%, #EEF2F6 100%);
+  font-family: 'Inter', sans-serif;
+  overflow-y: hidden;
+  flex-wrap: nowrap;
+}
+
+.kanban-tab {
+  height: 5px;
+}
+
+.kanban-board {
+  overflow-x: auto !important;
+  flex:1;
+  height: 100%
+  
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* full viewport height */
+  width: 100vw;
+  overflow: hidden; /* prevent page scrolling */
+
+}
+
 
 .task-card {
   position: relative;
   background-color: #ffffff;
   padding: 0.5em;
   z-index: 5;
-  border-radius: 10px;
+  border-radius: 16px;
   max-width: inherit;
   will-change: transform;
 }
@@ -100,23 +141,50 @@
   border-radius: 10px;
 }
 
-.board-header {
-  background-color: #EDF4FE;
-  font-size: 1em;
-  padding: 15px;
-  font-weight: bold;
+.kanban-header {
+  height: 64px; /* typical header height */
+  background: #3f51b5;
+  color: white;
+  display: flex;
+  align-items: center;
+  padding: 0 1.5rem;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
+/*
 .column {
-  background-color: #F1F2F4;
-  border-radius: 10px;
-  max-width: 300px;
-  box-shadow: 4px 4px 2px rgba(0, 0, 0, 0.3);
+  min-width: 300px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+  overflow-y: auto;
+  max-height: 75vh;
+  
+}
+*/
+.column {
+  min-width: 300px;
+  background: white !important;
+  border-radius: 16px !important;
+  padding: 1rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05) !important;
+  flex-shrink: 0;
+  overflow-y: auto;
+  max-height: 90%;
+  transition: all 0.2s ease !important; 
+}
+
+.column:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.1);
 }
 
 .add-task-container {
   background-color: #ffffff;
-  border-radius: 10px;
+  border-radius: 8px !important;
 }
 
 .username {
@@ -201,9 +269,21 @@ modal stuff
 }
 
 
+.modal {
+  position: fixed; /* stays in place even when scrolling */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* offset by half its width/height */
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  z-index: 1000; /* above other content */
+  box-shadow:  0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
 
-
-
+input[type="checkbox"] {
+  pointer-events: auto !important;
+}
 
 
 

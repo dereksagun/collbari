@@ -8,9 +8,10 @@ import columnRouter from './routes/columns.route';
 import boardRouter from './routes/boards.route';
 import userRouter from './routes/users.route';
 import loginRouter from './routes/login.route';
+import mongoose from 'mongoose';
+import config from './utils/config'
 
 import { Server } from "socket.io";
-
 
 const { createServer } = require('node:http');
 const id: string = uuidv4();
@@ -18,6 +19,21 @@ const id: string = uuidv4();
 const app = express();
 const server = createServer(app);
 const io = new Server(server)
+
+
+if (!config.MONGODB_URI) {
+  throw new Error('MONGODB_URI is not defined in environment variables');
+}
+
+mongoose
+  .connect(config.MONGODB_URI)
+  .then(() => {
+    console.log('connected to MongoDB')
+  })
+  .catch((error) => {
+    console.log('error connection to MongoDB:', error.message)
+  })
+
 
 app.use(express.json());
 
@@ -48,20 +64,30 @@ io.on('connect', (socket) => {
 
   socket.on('add:task', data => {
     console.log(`Recieved add:task`);
-    console.log(data);
+    console.log(data)
     socket.to(data.boardId).emit('add:task', data);
   });
 
   socket.on('add:column', data => {
     console.log(`Recieved add:column`);
-    console.log(data);
     socket.to(data.boardId).emit('add:column', data);
+  })
+
+  socket.on('update:task', data => {
+    console.log('Received update:task');
+    socket.to(data.boardId).emit('update:task', data);
+  })
+
+  socket.on('delete:task', data => {
+    console.log('Received delete:task');
+    socket.to(data.boardId).emit('delete:task', data);
   })
 
   socket.on('update:column', data => {
     console.log('Received update:column');
     socket.to(data.boardId).emit('update:column', data.column);
   })
+
 
   socket.on('disconnect', () => {
     console.log('user disconnected');

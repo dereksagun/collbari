@@ -4,19 +4,10 @@ export interface Task {
   id: ID,
   title: string,
   description: string,
-  status: Status
+  completed: boolean
 };
 
 export type NewTask = Omit<Task, 'id'>;
-
-export const Status = {
-  Todo: 'not started',
-  InProgress: 'in progress',
-  Done: 'completed',
-  Backlog: 'backlog'
-} as const;
-
-export type Status = typeof Status[keyof typeof Status];
 
 export interface Column {
   id: ID,
@@ -36,6 +27,7 @@ export interface Board {
   columnIds: ID[];
   owner: ID;
   sharedWith: ID[];
+  title: string;
 }
 
 export type NewBoard = Omit<Board, 'id'>;

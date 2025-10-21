@@ -37,6 +37,7 @@ export const useBoards = () => {
     })
   }
 
+
   return {
     ...boardsQuery,
     createBoard,

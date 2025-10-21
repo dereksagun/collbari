@@ -18,8 +18,13 @@ const updateTask = async (obj: Task): Promise<Task> => {
   return data;
 }
 
+const deleteTask = async (id: string): Promise<void> => {
+  await axios.delete<void>(`${baseUrl}/${id}`)
+}
+
 export default {
   getAll,
   addTask,
-  updateTask
+  updateTask,
+  deleteTask
 };

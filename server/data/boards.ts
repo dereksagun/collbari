@@ -1,21 +1,81 @@
 import type { Board } from "../types";
 
 export const boards: Board[] = [
+  // 🧑‍💻 ENGINEERING
   {
-    id: '0885a48f-333a-4580-9296-c2eba6fd08a6',
+    id: 'board-eng-platform',
+    title: 'Platform Development',
     columnIds: [
-      '264b3c54-6e50-4edc-acc6-3b4461c7c8d4',
-      '367e4aab-ed3e-44a7-a8b5-37819765c785',
-      '01049d47-2274-40fb-a767-6379f82617fa',
+      'col-eng-plat-backlog',
+      'col-eng-plat-progress',
+      'col-eng-plat-review',
+      'col-eng-plat-done',
     ],
     owner: 'b4c5bd0a-d3d7-4af5-a34c-dc7f75364511',
-    sharedWith: []
+    sharedWith: [],
   },
   {
-    id: 'test-id',
+    id: 'board-eng-frontend',
+    title: 'Frontend Overhaul',
     columnIds: [
+      'col-eng-front-todo',
+      'col-eng-front-progress',
+      'col-eng-front-done',
+    ],
+    owner: 'b4c5bd0a-d3d7-4af5-a34c-dc7f75364511',
+    sharedWith: [],
+  },
+  {
+    id: 'board-eng-bugs',
+    title: 'Bug Triage',
+    columnIds: [
+      'col-eng-bugs-reported',
+      'col-eng-bugs-fixing',
+      'col-eng-bugs-verified',
+    ],
+    owner: 'b4c5bd0a-d3d7-4af5-a34c-dc7f75364511',
+    sharedWith: [],
+  },
+
+  // 📊 DATA SCIENCE
+  {
+    id: 'board-data-analytics',
+    title: 'Customer Analytics',
+    columnIds: [
+      'col-data-analytics-todo',
+      'col-data-analytics-progress',
+      'col-data-analytics-done',
     ],
     owner: 'ff8c1829-fdf3-4955-a1f5-03df05820a9d',
-    sharedWith: ['b4c5bd0a-d3d7-4af5-a34c-dc7f75364511']
-  }
-]
+    sharedWith: [],
+  },
+  {
+    id: 'board-data-model',
+    title: 'Model Development',
+    columnIds: ['col-ml-todo', 'col-ml-progress', 'col-ml-validate'],
+    owner: 'ff8c1829-fdf3-4955-a1f5-03df05820a9d',
+    sharedWith: [],
+  },
+
+  // 📅 PROJECT MANAGEMENT
+  {
+    id: 'board-pm-launch',
+    title: 'Q4 Launch Planning',
+    columnIds: ['col-pm-launch-plan', 'col-pm-launch-exec'],
+    owner: 'ff8c1829-fdf3-4955-a1f5-03df05820a9d',
+    sharedWith: ['b4c5bd0a-d3d7-4af5-a34c-dc7f75364511'],
+  },
+
+  // 🎨 DESIGN
+  {
+    id: 'board-design-web',
+    title: 'Website Redesign',
+    columnIds: [
+      'col-design-web-todo',
+      'col-design-web-progress',
+      'col-design-web-done',
+    ],
+    owner: 'b4c5bd0a-d3d7-4af5-a34c-dc7f75364511',
+    sharedWith: ['ff8c1829-fdf3-4955-a1f5-03df05820a9d'],
+  },
+];

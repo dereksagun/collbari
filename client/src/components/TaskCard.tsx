@@ -1,4 +1,4 @@
-import { Card } from "@mui/material";
+import { Box, Paper } from "@mui/material";
 import { forwardRef } from "react";
 
 interface TaskCardProps {
@@ -7,13 +7,16 @@ interface TaskCardProps {
 }
 
 const TaskCard =forwardRef<HTMLDivElement, TaskCardProps>(({style, children, ...props}, ref) => {
-
-
   return (
     <>
-      <Card variant="outlined" className='task-card' style={style} ref={ref} {...props}>       
-        <h5>{children}</h5> 
-      </Card>
+      <Paper 
+      style={style} 
+      ref={ref} {...props}
+        elevation={2} 
+        sx={{ p: 1, mb: 1, '&:hover': { boxShadow: 3 }, width: '100%', 
+         }}>
+        <Box sx={{display: 'flex', alignItems: 'center', gap: '8px', }}>{children}</Box> 
+      </Paper>
     </>
   )
 })

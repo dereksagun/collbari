@@ -1,28 +1,46 @@
 import { columns } from "../../data/columns";
 import { Column, NewColumn } from "../../types";
 import { v4 as uuidv4 } from 'uuid';
+import ColumnModel from "../models/column";
 
-
-const getAll = async (): Promise<Column[]> => {
-  return columns;
+const getAll = async (): Promise<any> => {
+  const columns = await ColumnModel.find({});
+  const output = columns.map(c => c.toJSON()) as unknown as Column[]
+  return output;
 };
 
-const createColumn = async (obj: NewColumn): Promise<Column> => {
-  const newColumn = {
-    id: uuidv4(),
-    ...obj
+const createColumn = async (obj: NewColumn): Promise<any> => {
+  try{
+    const newColumn = new ColumnModel(obj);
+    const addedColumn = await newColumn.save()
+    if(!addedColumn) throw new Error('error creating column');
+
+    return addedColumn.toJSON()
+  } catch (error) {
+    if(error instanceof Error){
+      console.error('Error creating column:', error.message);
+    }
+    throw error;
   }
-  columns.push(newColumn);
-  return newColumn;
 };
 
+const updateColumn = async (id: string, updates: Column): Promise<any> => {
+  try{
+    const column = await ColumnModel.findById(id);
+    if(!column) throw new Error('error updating column');
 
-const updateColumn = async (id: string, updates: Column): Promise<Column> => {
-  const idx = columns.findIndex(col => col.id === id);
-  columns[idx] = {...columns[idx], ...updates};
+    column.name = updates.name;
+    column.taskIds = updates.taskIds;
 
-  return columns[idx];
+    const updatedColumn = await column.save();
+    return updatedColumn;
 
+  } catch (error) {
+    if(error instanceof Error){
+      console.error('Error creating column:', error.message);
+    }
+    throw error;
+  }
 }
 
 export default {

@@ -2,6 +2,7 @@ import { Router, Request, Response } from "express";
 import BoardsService from "../services/boards.service";
 import { Board, NewBoard } from "../../types";
 import jwt from "jsonwebtoken"
+import config from '../utils/config'
 
 const router = Router();
 
@@ -12,7 +13,8 @@ router.get('/', async (req: Request, res: Response<Board[]>) => {
   if(!token) return res.status(401)
 
   try {
-    const decoded = jwt.verify(token, 'secret-key') as {
+    if(!config.SECRET) throw new Error ('Environement variable is not set.');
+    const decoded = jwt.verify(token, config.SECRET) as {
       id: string,
       email: string
     }

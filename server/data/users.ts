@@ -1,7 +1,7 @@
-import { User } from "../types";
+import { UserType } from "../types";
 
 
-export const users: User[] = [
+export const users: UserType[] = [
   {
     "id": "b4c5bd0a-d3d7-4af5-a34c-dc7f75364511",
     "email": "derek2@gmail.com",

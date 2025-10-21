@@ -137,15 +137,3 @@
 .input-textbox:focus {
   color: #05060fc2;
 }
-
-.modal {
-  position: fixed; /* stays in place even when scrolling */
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%); /* offset by half its width/height */
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-  z-index: 1000; /* above other content */
-}

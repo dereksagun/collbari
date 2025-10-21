@@ -1,10 +1,11 @@
-import type { Column, ColumnDetailed } from "../types";
+import type { ColumnDetailed } from "../types";
 import TaskCard from "./TaskCard";
-import { useModal } from "./Modal";
+import { useModal } from "./Context/ModalContext";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useDroppable } from "@dnd-kit/core";
 import TaskCardDraggable from "./TaskCardDraggable";
 import Card from "@mui/material/Card";
+import { Button, Typography } from "@mui/material";
 
 
 
@@ -23,16 +24,16 @@ const ColumnGrid = ({boardId, column}: {boardId: string, column: ColumnDetailed}
 
   return (
     <div >
-      <Card className="column flex flex-col gap-y-3 p-5 w-[300px]" ref={setNodeRef}>
-        {column.name}
+      <Card className="column flex flex-col gap-y-3 p-5 w-[300px]" sx={{ overflowY: 'auto' }} ref={setNodeRef}>
+        <Typography variant="h6">{column.name}</Typography>
           <SortableContext items={tasksIds} strategy={verticalListSortingStrategy}>
             {column.tasks.map(task => (
-              <TaskCardDraggable key={task.id} task={task}>
+              <TaskCardDraggable key={task.id} task={task} boardId={boardId} column={column}>
                 <TaskCard />
               </TaskCardDraggable>
             ))}
           </SortableContext>
-        <button onClick={handleAddTask} className="add-task-button">+ Add another</button>
+        <Button onClick={handleAddTask} variant="text" sx={{ textAlign: 'left', justifyContent: 'flex-start'}}>+ Add</Button>
       </Card>
     </div>
   )

@@ -1,8 +1,12 @@
+
 import { Router, Request, Response } from "express";
 import { LoginInformation, UserNonSensitive } from "../../types";
 import { users } from "../../data/users";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
+import usersService from "../services/users.service";
+import config from '../utils/config'
+
 
 const router = Router();
 
@@ -12,25 +16,30 @@ interface TokenResponse {
 }
 
 router.post('/', async (req: Request<any, any, LoginInformation>, res: Response) => {
-  const { email, password } = req.body;
-  const user = users.find(user => user.email === email);
+  try {
+    const { email, password } = req.body;
+    const user = await usersService.getUserByEmail(email);
+    if(!user) return res.status(400).json({ error: "User doesnt exist." });
 
-  if(!user ) return res.status(400).json({ error: "Invalid credentials" });
+    const isValid = await bcrypt.compare(password, user.passwordHash);
+    if(!isValid) return res.status(400).json({ error: "Invalid credentials" });
 
-  const isValid = await bcrypt.compare(password, user.passwordHash);
+    if(!config.SECRET) throw new Error ('Environement variable is not set')
+    const token = jwt.sign({id: user.id}, config.SECRET, {expiresIn: '10m'});
 
-  if(!isValid) return res.status(400).json({ error: "Invalid credentials" });
+    res.status(201).json({
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email
+      },
+      token
+    })
 
-  const token = jwt.sign({id: user.id}, "secret-key", {expiresIn: '10m'});
+  } catch (error) {
 
-  res.json({
-    user: {
-      id: user.id,
-      username: user.username,
-      email: user.email
-    },
-    token
-  })
+    res.status(400).json({ error: error });
+  }
 
 })
 
