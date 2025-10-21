@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { loginPayload, User, UserNonSensitive } from "../types";
+import type { loginPayload } from "../types";
 
 const baseUrl = '/api/auth/login'
 

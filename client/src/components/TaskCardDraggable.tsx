@@ -9,7 +9,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useState } from "react";
 import { useColumns } from "../hooks/useColumns";
 
-const TaskCardDraggable = ({task, children, boardId, column}: {task: Task, children: React.ReactNode, boardId: string, column: Column}) => {
+const TaskCardDraggable = ({task, boardId, column}: {task: Task, children: React.ReactNode, boardId: string, column: Column}) => {
   const [display, setDisplay] = useState('none');
 
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({

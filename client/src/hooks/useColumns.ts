@@ -34,9 +34,9 @@ export const useColumns = () => {
     })
 
   const updateColumn = useMutation({
-      mutationFn: async ({boardId, column}: {boardId: string, column: Column}) =>
+      mutationFn: async ({column}: {boardId: string, column: Column}) =>
         await columnService.updateColumn(column.id, column),
-      onMutate: async ({boardId, column}: {boardId: string, column: Column}) => {
+      onMutate: async ({column}: {boardId: string, column: Column}) => {
         // cancel any outgoing refetches
         await queryClient.cancelQueries({ queryKey: [queryKeys.columns] });
     

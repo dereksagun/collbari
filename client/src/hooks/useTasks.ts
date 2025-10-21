@@ -14,7 +14,7 @@ export const useTasks = () => {
   })
 
   const createTask = useMutation({
-      mutationFn: async ({ column, task, boardId } : {column: Column, task: NewTask, boardId: string}) => {
+      mutationFn: async ({ column, task } : {column: Column, task: NewTask, boardId: string}) => {
         const addedTask: Task = await taskService.addTask(task);
         const updatedColumn: Column = await columnService.addTaskToColumn(column, addedTask);
         return {addedTask, updatedColumn};
@@ -35,22 +35,22 @@ export const useTasks = () => {
 
 
   const updateTask = useMutation({
-    mutationFn: async ({updatedTask, boardId}: {updatedTask: Task, boardId: string}): Promise<Task> => {
+    mutationFn: async ({updatedTask}: {updatedTask: Task, boardId: string}): Promise<Task> => {
       return await taskService.updateTask(updatedTask);
     },
 
-    onSuccess: async (task, variables) => {
+    onSuccess: async (_task, variables) => {
       await queryClient.invalidateQueries({queryKey: [queryKeys.tasks]});
       emitUpdateTask({boardId: variables.boardId, task: variables.updatedTask});
     }
   })
 
   const deleteTask = useMutation({
-    mutationFn: async ({taskId, boardId}: {taskId: string, boardId: string}): Promise<void> => {
+    mutationFn: async ({taskId}: {taskId: string, boardId: string}): Promise<void> => {
       await taskService.deleteTask(taskId);
     },
 
-    onSuccess: async (data, variables) => {
+    onSuccess: async (_data, variables) => {
       await queryClient.invalidateQueries({queryKey: [queryKeys.tasks]});
       emitDeleteTask({task: variables.taskId, boardId: variables.boardId});
     }
