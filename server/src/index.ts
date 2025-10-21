@@ -2,7 +2,6 @@ import express, { Request, Response } from 'express'
 import { tasks } from '../data/task';
 import { columns } from '../data/columns';
 import type { Task, Column, NewTask, NewColumn, Board } from '../types';
-import { v4 as uuidv4 } from 'uuid';
 import taskRouter from './routes/tasks.route';
 import columnRouter from './routes/columns.route';
 import boardRouter from './routes/boards.route';
@@ -14,7 +13,6 @@ import config from './utils/config'
 import { Server } from "socket.io";
 
 const { createServer } = require('node:http');
-const id: string = uuidv4();
 
 const app = express();
 const server = createServer(app);
@@ -64,7 +62,6 @@ io.on('connect', (socket) => {
 
   socket.on('add:task', data => {
     console.log(`Recieved add:task`);
-    console.log(data)
     socket.to(data.boardId).emit('add:task', data);
   });
 
@@ -95,7 +92,7 @@ io.on('connect', (socket) => {
   
 })
 
-const PORT = 3000;
+const PORT = config.PORT;
 
 server.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
