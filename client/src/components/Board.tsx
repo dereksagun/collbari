@@ -18,6 +18,7 @@ import AddColumnButton from "./Inputs/AddColumnButton"
 import NewBoardForm from "./Forms/NewBoardForm"
 import { UserContext } from "./Context/UserContext"
 import ShareUsersColumn from "./SharedUsersColumn"
+import WelcomePage from "./WelcomePage"
 
 
 const Modal = () => {
@@ -87,7 +88,7 @@ const KanbanBoard = () => {
       } = useTasks();
   useEffect(() => {
     if(!activeBoard?.id) return;
-
+  
     connectSocket({
       onAddTask: insertTaskIntoCache,
       onAddColumn: insertNewColumnIntoCache,
@@ -223,14 +224,17 @@ const KanbanBoard = () => {
   }
   return (
     <ModalProvider>
-    <div className="kanban-background">
+    {!activeBoard 
+      ? 
+      <WelcomePage /> 
+      : 
+      <div className="kanban-background">
       <div className="kanban-tab-header">
         <BoardTabs activeBoard={activeBoard} boards={boards} handleBoardChange={handleBoardChange}></BoardTabs> 
       </div>
       <div style={{display: 'flex', flex: 1, height: '100%'}}>
         <ShareUsersColumn board={activeBoard}/>
       <div className="kanban-board">
-      <Modal />
       <DndContext onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd} collisionDetection={closestCenter} sensors={sensors}>
           <div style={{height: '100%'}}>
             {activeBoard 
@@ -255,6 +259,8 @@ const KanbanBoard = () => {
       </div>
       
     </div>
+    }
+    <Modal />
     </ModalProvider>
     
   )
