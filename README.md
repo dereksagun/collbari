@@ -36,7 +36,7 @@ Share Kanban Board Form:
 <img width="1915" height="953" alt="Screenshot 2025-10-28 at 3 22 29 PM" src="https://github.com/user-attachments/assets/3ba465c2-f710-4d84-b8da-df9edddaf7c4" />
 
 Real-time collaboration between Two Users
-https://github.com/user-attachments/assets/86125a3a-9a5e-4055-a43b-565165e92678
+<video src="https://github.com/user-attachments/assets/86125a3a-9a5e-4055-a43b-565165e92678" width="320" height="240" controls></video>
 
 👤 Author
 Derek Sagun
