@@ -4,9 +4,7 @@ Collabri is a full-stack SaaS project management application built with TypeScri
 It enables users to collaborate in real time through an interactive Kanban board, allowing users to manage projects, columns, and tasks dynamically and efficiently.
 
 🌐 Deployment
-Both frontend and backend are deployed on Render:
   - Frontend: https://collabri-frontend.onrender.com
-  - Backend: https://collabri-backend.onrender.com
   
 🚀 Features
   - User Authentication — Secure signup and login using JWT and bcrypt.
