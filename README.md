@@ -3,6 +3,10 @@
 Collabri is a full-stack SaaS project management application built with TypeScript, React, Node.js, and MongoDB.
 It enables users to collaborate in real time through an interactive Kanban board, allowing users to manage projects, columns, and tasks dynamically and efficiently.
 
+These are the credentials if you would like to run this with a test account!
+Email: derektestaccount
+Password: derektestaccount
+
 🌐 Deployment
   - Frontend: https://collabri-frontend.onrender.com
   
