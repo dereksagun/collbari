@@ -5,9 +5,9 @@ It enables users to collaborate in real time through an interactive Kanban board
 
 These are the credentials if you would like to run this with a test account!
 
-Email: derektestaccount
+**Email**: derektestaccount
 
-Password: derektestaccount
+**Password**: derektestaccount
 
 🌐 Deployment
   - Frontend: https://collabri-frontend.onrender.com
